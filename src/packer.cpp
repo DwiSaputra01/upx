@@ -706,22 +706,8 @@ int Packer::patch_le32(void *b, int blen, const void *old, unsigned new_) {
 **************************************************************************/
 
 static const char *getIdentstr(unsigned *size, int small) {
-    static char identbig[] = "\0";  // Kosong
-    static char identsmall[] = "\0"; // Kosong
-    static char identtiny[] = "\0";  // Kosong
-
-    if (small < 0)
-        small = opt->small;
-    if (small >= 2) {
-        *size = sizeof(identtiny) - 1; // Menyediakan ukuran string kosong
-        return identtiny;
-    } else if (small >= 1) {
-        *size = sizeof(identsmall) - 1; // Menyediakan ukuran string kosong
-        return identsmall;
-    } else {
-        *size = sizeof(identbig) - 1; // Menyediakan ukuran string kosong
-        return identbig;
-    }
+    *size = 0;
+    return nullptr;
 }
 
 void Packer::initLoader(const void *pdata, int plen, int small, int pextra) {
@@ -729,10 +715,9 @@ void Packer::initLoader(const void *pdata, int plen, int small, int pextra) {
     linker = newLinker();
     assert(bele == linker->bele);
     linker->init(pdata, plen, pextra);
-
     unsigned size;
-    char const *const ident = getIdentstr(&size, small);
-    linker->addSection("IDENTSTR", ident, size, 0); // Menambahkan section IDENTSTR yang kosong
+    const char *ident = getIdentstr(&size, small);
+    linker->addSection("IDENTSTR", ident, size, 0);
 }
 
 #define C const char *
