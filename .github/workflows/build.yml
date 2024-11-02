@@ -9,7 +9,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
       - name: Install dependencies
         run: |
@@ -26,7 +26,7 @@ jobs:
           tar -czf upx.tar.gz upx
 
       - name: Upload binaries
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: upx-binaries
           path: upx.tar.gz
