@@ -1,4 +1,4 @@
-name: Build UPX
+name: Build UPX with Specific GCC Version
 
 on:
   workflow_dispatch:
@@ -7,33 +7,22 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    container:
-      image: centos:latest
-      options: --dns=8.8.8.8
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up CentOS repo
+      - name: Install Specific GCC Version
         run: |
-          echo "[baseos]" > /etc/yum.repos.d/CentOS-Base.repo
-          echo "name=CentOS-\$releasever - Base" >> /etc/yum.repos.d/CentOS-Base.repo
-          echo "baseurl=http://vault.centos.org/centos/8/os/\$basearch/" >> /etc/yum.repos.d/CentOS-Base.repo
-          echo "enabled=1" >> /etc/yum.repos.d/CentOS-Base.repo
-          echo "gpgcheck=1" >> /etc/yum.repos.d/CentOS-Base.repo
-          echo "gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-centos8" >> /etc/yum.repos.d/CentOS-Base.repo
-
-      - name: Install dependencies
-        run: |
-          yum -y update
-          yum -y groupinstall "Development Tools"
-          yum -y install git
+          sudo apt-get update -y
+          sudo apt-get install -y software-properties-common
+          sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+          sudo apt-get update -y
+          sudo apt-get install -y gcc-7 g++-7
 
       - name: Build UPX
         run: |
           git submodule update --init --recursive
-          make CXXFLAGS="-Wno-error" all
+          make CC=gcc-7 CXX=g++-7 CXXFLAGS="-Wno-error" all
 
       - name: Archive binaries
         run: |
