@@ -18,6 +18,7 @@ jobs:
 
       - name: Build UPX
         run: |
+          git submodule update --init --recursive
           make all
 
       - name: Archive binaries
