@@ -9,10 +9,20 @@ jobs:
 
     container:
       image: centos:latest
+      options: --dns=8.8.8.8
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Set up CentOS repo
+        run: |
+          echo "[baseos]" > /etc/yum.repos.d/CentOS-Base.repo
+          echo "name=CentOS-\$releasever - Base" >> /etc/yum.repos.d/CentOS-Base.repo
+          echo "baseurl=http://mirror.centos.org/centos/8/os/\$basearch/" >> /etc/yum.repos.d/CentOS-Base.repo
+          echo "enabled=1" >> /etc/yum.repos.d/CentOS-Base.repo
+          echo "gpgcheck=1" >> /etc/yum.repos.d/CentOS-Base.repo
+          echo "gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-centos8" >> /etc/yum.repos.d/CentOS-Base.repo
 
       - name: Install dependencies
         run: |
