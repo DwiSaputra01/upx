@@ -1,0 +1,32 @@
+name: Build UPX
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git
+
+      - name: Build UPX
+        run: |
+          cd upx
+          make all
+
+      - name: Archive binaries
+        run: |
+          tar -czf upx.tar.gz upx
+
+      - name: Upload binaries
+        uses: actions/upload-artifact@v2
+        with:
+          name: upx-binaries
+          path: upx.tar.gz
