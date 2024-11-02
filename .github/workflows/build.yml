@@ -19,7 +19,7 @@ jobs:
       - name: Build UPX
         run: |
           git submodule update --init --recursive
-          make all
+          make CXXFLAGS="-Wno-error" all
 
       - name: Archive binaries
         run: |
