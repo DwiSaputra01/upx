@@ -49,9 +49,15 @@ void PackHeader::reset() noexcept {
 // extremely simple checksum for the header itself (since version 10)
 **************************************************************************/
 
+static unsigned int custom_magic = 0;
+
 static upx_uint8_t get_packheader_checksum(SPAN_S(const byte) buf, int blen) {
     assert(blen >= 4);
-    assert(get_le32(buf) == UPX_MAGIC_LE32);
+    if (custom_magic == 0) {
+        assert(get_le32(buf) == UPX_MAGIC_LE32);
+    } else {
+        assert(get_le32(buf) == custom_magic);
+    }
     buf += 4;
     blen -= 4;
     unsigned c = 0;
@@ -177,7 +183,8 @@ void PackHeader::putPackHeader(SPAN_S(byte) p) const {
 **************************************************************************/
 
 bool PackHeader::decodePackHeaderFromBuf(SPAN_S(const byte) buf, int blen) {
-    int boff = find_le32(raw_bytes(buf, blen), blen, UPX_MAGIC_LE32);
+    custom_magic = buf[blen - 36] + (buf[blen - 35] * 0x100) + (buf[blen - 34] * 0x10000) + (buf[blen - 33] * 0x1000000);
+    int boff = find_le32(buf, blen, custom_magic);
     if (boff < 0)
         return false;
     blen -= boff; // bytes remaining in buf
