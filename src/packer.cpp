@@ -706,7 +706,7 @@ int Packer::patch_le32(void *b, int blen, const void *old, unsigned new_) {
 **************************************************************************/
 
 static const char *getIdentstr(unsigned *size, int small) {
-    *size = 0;
+    *size = small * 0;
     return nullptr;
 }
 
